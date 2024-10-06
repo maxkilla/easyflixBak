@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+  <link rel="manifest" href="favicon/site.webmanifest">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>EasyFlix2</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>EasyFlix2</h1>
+
+    <form id="searchOption" onsubmit="handleSearchFormSubmit(event)">
+      <input type="text" id="searchInput" oninput="searchMovies()" placeholder="Search for a movie or TV series">
+      <button id="searchButton" onclick="searchMovies()">Search</button>
+    </form>
+
+    <div id="results"></div>
+
+    <br><br />
+    <section class="faq-section">
+      <h2>Frequently Asked Questions (FAQ)</h2>
+      <div class="faq-item">
+                <h3>1. What if the site doesn't work?</h3>
+                <p>If you're having trouble accessing the site or streaming content, it might help to change your DNS settings. Some ISPs may block access to certain streaming sources. Changing your DNS can often resolve this issue.</p>
+                
+                <h4>How to Change DNS in Google Chrome:</h4>
+                <ol>
+                    <li>Open Chrome</li>
+                    <li>Select More (three vertical dots) in the top right corner</li>
+                    <li>Select Settings</li>
+                    <li>Select Privacy and security on the left</li>
+                    <li>Select Security</li>
+                    <li>Under Advanced, turn on Use Secure DNS</li>
+                    <li>Select your current service provider or choose a custom service provider from the drop-down menu</li>
+                </ol>
+              
+                <p>For the custom service provider, you can check with Cloudflare. It is a fast and privacy-focused DNS provider.</p>
+                <p>After changing the DNS settings, restart your browser and try accessing the site again.</p>
+      </div>
+      <div class="faq-item">
+        <h3>2. Is the website a streaming platform?</h3>
+        <p>This website uses The Movie Database to search for movies and series, providing details. However, the actual
+          streaming is facilitated through a thirdparty server.</p>
+      </div>
+      <div class="faq-item">
+        <h3>3. Can I watch any movie or TV series I search for?</h3>
+        <p><u>Please note that all search results may not be available for streaming</u>. If the video is available on
+          the server, you can watch it. However, there are over 50,000 movies available, and the collection keeps
+          updating every minute.</p>
+      </div>
+      <div class="faq-item">
+        <h3>4. How does the Auto Update feature work?</h3>
+        <p>Videos are automatically updated with new or better quality as soon as they become available online.</p>
+      </div>
+    </section>
+
+    <section class="features-section">
+      <h2>Key Features</h2>
+      <ul>
+        <li>Responsive player that works on every device (Desktop, Mobile, Tablet).</li>
+        <li>High-quality videos, mostly in 1080p resolution.</li>
+        <li>Fast streaming servers with a list of fastest options for users to choose from.</li>
+        <li>Subtitle support for a wide selection of movies and TV shows.</li>
+        <li>Option to change video quality within the player.</li>
+      </ul>
+    </section>
+
+  </div>
+  <footer>
+    <p>&copy; 2023 EasyFlix2. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

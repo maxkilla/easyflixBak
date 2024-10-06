@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+  <link rel="manifest" href="favicon/site.webmanifest">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>EasyFlix2</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>EasyFlix2</h1>
+    <div id="details"></div>
+    <button id="homeButton" onclick="goHome()">Home</button>
+    <div id="videoOptions" style="display: none;">
+      <label for="seasonSelect">Season:</label>
+      <select id="seasonSelect"></select>
+      <label for="episodeSelect">Episode:</label>
+      <select id="episodeSelect"></select>
+    </div>
+    <div id="episodeDetails"></div>
+    <button id="watchNowButton" onclick="openVideo()">Watch Now</button>
+    <div id="videoContainer" class="video-container"></div>
+  </div>
+  <footer>
+    <p>&copy; 2023 EasyFlix2. All rights reserved.</p>
+  </footer>
+  <script src="details.js"></script>
+</body>
+
+</html>
