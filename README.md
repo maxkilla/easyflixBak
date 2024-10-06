@@ -1,6 +1,2 @@
-# EasyFlix2
-This website provides streaming options for movies and TV shows.
+# EasyFlix2 backup
 
-## Website
-
-Check out the live website [here](https://anilove31.github.io/EasyFlix2/).
