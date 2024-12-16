@@ -11,73 +11,97 @@
   <meta name="theme-color" content="#ffffff">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
-  <title>EasyFlix2</title>
+  <title>CineVibe</title>
 </head>
 
 <body>
   <div class="container">
-    <h1>EasyFlix2</h1>
+    <header>
+      <nav class="main-nav">
+        <h1>CineVibe</h1>
+        <div class="nav-links">
+          <a href="#" class="active">Movies</a>
+          <a href="#">TV Shows</a>
+          <a href="#">My List</a>
+        </div>
+        <div class="user-menu">
+          <button class="watchlist-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </button>
+        </div>
+      </nav>
+      <form id="searchOption" onsubmit="handleSearchFormSubmit(event)">
+        <div class="search-container">
+          <input type="text" id="searchInput" oninput="searchMovies()" placeholder="Search for a movie or TV series">
+          <button id="searchButton" onclick="searchMovies()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </header>
 
-    <form id="searchOption" onsubmit="handleSearchFormSubmit(event)">
-      <input type="text" id="searchInput" oninput="searchMovies()" placeholder="Search for a movie or TV series">
-      <button id="searchButton" onclick="searchMovies()">Search</button>
-    </form>
-
-    <div id="results"></div>
-
-    <br><br />
-    <section class="faq-section">
-      <h2>Frequently Asked Questions (FAQ)</h2>
-      <div class="faq-item">
-                <h3>1. What if the site doesn't work?</h3>
-                <p>If you're having trouble accessing the site or streaming content, it might help to change your DNS settings. Some ISPs may block access to certain streaming sources. Changing your DNS can often resolve this issue.</p>
-                
-                <h4>How to Change DNS in Google Chrome:</h4>
-                <ol>
-                    <li>Open Chrome</li>
-                    <li>Select More (three vertical dots) in the top right corner</li>
-                    <li>Select Settings</li>
-                    <li>Select Privacy and security on the left</li>
-                    <li>Select Security</li>
-                    <li>Under Advanced, turn on Use Secure DNS</li>
-                    <li>Select your current service provider or choose a custom service provider from the drop-down menu</li>
-                </ol>
-              
-                <p>For the custom service provider, you can check with Cloudflare. It is a fast and privacy-focused DNS provider.</p>
-                <p>After changing the DNS settings, restart your browser and try accessing the site again.</p>
+    <main>
+      <div class="genre-filter">
+        <div class="genre-scroll" id="genreList">
+          <!-- Genres will be populated by JavaScript -->
+        </div>
       </div>
-      <div class="faq-item">
-        <h3>2. Is the website a streaming platform?</h3>
-        <p>This website uses The Movie Database to search for movies and series, providing details. However, the actual
-          streaming is facilitated through a thirdparty server.</p>
-      </div>
-      <div class="faq-item">
-        <h3>3. Can I watch any movie or TV series I search for?</h3>
-        <p><u>Please note that all search results may not be available for streaming</u>. If the video is available on
-          the server, you can watch it. However, there are over 50,000 movies available, and the collection keeps
-          updating every minute.</p>
-      </div>
-      <div class="faq-item">
-        <h3>4. How does the Auto Update feature work?</h3>
-        <p>Videos are automatically updated with new or better quality as soon as they become available online.</p>
-      </div>
-    </section>
+      
+      <div id="results"></div>
 
-    <section class="features-section">
-      <h2>Key Features</h2>
-      <ul>
-        <li>Responsive player that works on every device (Desktop, Mobile, Tablet).</li>
-        <li>High-quality videos, mostly in 1080p resolution.</li>
-        <li>Fast streaming servers with a list of fastest options for users to choose from.</li>
-        <li>Subtitle support for a wide selection of movies and TV shows.</li>
-        <li>Option to change video quality within the player.</li>
-      </ul>
-    </section>
+      <!-- Featured Movie Banner -->
+      <section class="featured-movie" id="featuredMovie">
+        <!-- Will be populated by JavaScript -->
+      </section>
 
+      <!-- Continue Watching Section -->
+      <section class="continue-watching">
+        <div class="section-header">
+          <h2>Continue Watching</h2>
+          <span class="view-all">View All</span>
+        </div>
+        <div id="continueWatching" class="movie-grid">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Trending Movies Section -->
+      <section class="trending-section">
+        <div class="section-header">
+          <h2>Trending Movies</h2>
+          <span class="view-all">View All</span>
+        </div>
+        <div id="trendingMovies" class="movie-grid"></div>
+      </section>
+
+      <!-- Top Rated Section -->
+      <section class="top-rated-section">
+        <div class="section-header">
+          <h2>Top Rated</h2>
+          <span class="view-all">View All</span>
+        </div>
+        <div id="topRatedMovies" class="movie-grid"></div>
+      </section>
+
+      <!-- Upcoming Movies Section -->
+      <section class="upcoming-section">
+        <div class="section-header">
+          <h2>Coming Soon</h2>
+          <span class="view-all">View All</span>
+        </div>
+        <div id="upcomingMovies" class="movie-grid"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2024 CineVibe</p>
+    </footer>
   </div>
-  <footer>
-    <p>&copy; 2023 EasyFlix2. All rights reserved.</p>
-  </footer>
 
   <script src="script.js"></script>
 </body>
