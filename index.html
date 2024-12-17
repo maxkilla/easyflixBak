@@ -31,17 +31,42 @@
           </button>
         </div>
       </nav>
-      <form id="searchOption" onsubmit="handleSearchFormSubmit(event)">
+      <div class="search-section">
         <div class="search-container">
-          <input type="text" id="searchInput" oninput="searchMovies()" placeholder="Search for a movie or TV series">
-          <button id="searchButton" onclick="searchMovies()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </button>
+          <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search movies and TV shows...">
+            <button id="advancedSearchToggle" class="advanced-search-toggle">
+              <i class="fas fa-sliders-h"></i>
+            </button>
+          </div>
+          <div id="searchSuggestions" class="search-suggestions"></div>
+          <div id="advancedSearch" class="advanced-search">
+            <div class="filter-group">
+              <label for="yearFilter">Year:</label>
+              <select id="yearFilter">
+                <option value="">All Years</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="genreFilter">Genre:</label>
+              <select id="genreFilter">
+                <option value="">All Genres</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="ratingFilter">Minimum Rating:</label>
+              <select id="ratingFilter">
+                <option value="">Any Rating</option>
+                <option value="9">9+</option>
+                <option value="8">8+</option>
+                <option value="7">7+</option>
+                <option value="6">6+</option>
+                <option value="5">5+</option>
+              </select>
+            </div>
+          </div>
         </div>
-      </form>
+      </div>
     </header>
 
     <main>

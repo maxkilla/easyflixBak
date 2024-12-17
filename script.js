@@ -12,6 +12,10 @@ const upcomingContainer = document.getElementById('upcomingMovies');
 const continueWatchingContainer = document.getElementById('continueWatching');
 const featuredMovieContainer = document.getElementById('featuredMovie');
 const genreListContainer = document.getElementById('genreList');
+const yearFilter = document.getElementById('yearFilter');
+const genreFilter = document.getElementById('genreFilter');
+const ratingFilter = document.getElementById('ratingFilter');
+const searchSuggestions = document.getElementById('searchSuggestions');
 
 let selectedGenre = null;
 let watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
@@ -24,6 +28,50 @@ document.addEventListener('DOMContentLoaded', () => {
   loadFeaturedMovie();
   loadContent();
   setupNavigation();
+  initializeYearFilter();
+  initializeGenreFilter();
+
+  // Add search input event listener
+  const searchInput = document.getElementById('searchInput');
+  const advancedSearchToggle = document.getElementById('advancedSearchToggle');
+  const advancedSearch = document.getElementById('advancedSearch');
+
+  if (searchInput) {
+      searchInput.addEventListener('input', searchMovies);
+  }
+  
+  // Add advanced search toggle
+  if (advancedSearchToggle) {
+      advancedSearchToggle.addEventListener('click', () => {
+          advancedSearch.classList.toggle('active');
+          advancedSearchToggle.classList.toggle('active');
+      });
+  }
+  
+  // Close advanced search when clicking outside
+  document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-container')) {
+          advancedSearch.classList.remove('active');
+          advancedSearchToggle.classList.remove('active');
+          searchSuggestions.style.display = 'none';
+      }
+  });
+
+  // Add event listeners for filters
+  [yearFilter, genreFilter, ratingFilter].forEach(filter => {
+      if (filter) {
+          filter.addEventListener('change', () => {
+              searchMovies();
+          });
+      }
+  });
+  
+  // Close suggestions when clicking outside
+  document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-container')) {
+          searchSuggestions.style.display = 'none';
+      }
+  });
 });
 
 function setupNavigation() {
@@ -439,48 +487,99 @@ function displayTrendingMovies(movies) {
   });
 }
 
-function searchMovies() {
-  const query = searchInput.value;
-  if (query === '') {
-    resultsContainer.innerHTML = '';
-    return;
-  }
+let searchTimeout;
+async function searchMovies() {
+    const searchInput = document.getElementById('searchInput');
+    const query = searchInput.value.trim();
+    const year = yearFilter.value;
+    const genre = genreFilter.value;
+    const rating = ratingFilter.value;
 
-  if (query.trim() !== '') {
-    const apiUrl = `${tmdbBaseUrl}/search/multi?api_key=${tmdbApiKey}&query=${query}`;
+    clearTimeout(searchTimeout);
 
-    fetch(apiUrl)
-      .then(response => response.json())
-      .then(data => {
-        displayResults(data.results);
-      })
-      .catch(error => {
-        console.error('Error fetching search results:', error);
-      });
+    if (query.length < 2) {
+        searchSuggestions.style.display = 'none';
+        return;
+    }
+
+    searchTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch(
+                `${tmdbBaseUrl}/search/multi?api_key=${tmdbApiKey}&query=${query}&include_adult=false`
+            );
+            if (!response.ok) {
+                throw new Error('Search failed');
+            }
+            const data = await response.json();
+            
+            // Filter results
+            let filteredResults = data.results.filter(item => {
+                if (!item.release_date && !item.first_air_date) return false;
+                
+                const itemYear = new Date(item.release_date || item.first_air_date).getFullYear();
+                const itemRating = item.vote_average || 0;
+                
+                return (!year || itemYear === parseInt(year)) &&
+                       (!genre || (item.genre_ids && item.genre_ids.includes(parseInt(genre)))) &&
+                       (!rating || itemRating >= parseFloat(rating));
+            });
+
+            // Display results
+            displaySearchSuggestions(filteredResults.slice(0, 5));
+        } catch (error) {
+            console.error('Error searching:', error);
+            searchSuggestions.innerHTML = '<div class="suggestion-item">Error searching. Please try again.</div>';
+            searchSuggestions.style.display = 'block';
+        }
+    }, 300);
+}
+
+function displaySearchSuggestions(results) {
+    if (!results || !results.length) {
+        searchSuggestions.innerHTML = '<div class="suggestion-item">No results found</div>';
+        searchSuggestions.style.display = 'block';
+        return;
+    }
+
+    searchSuggestions.innerHTML = results.map(item => `
+        <div class="suggestion-item" onclick="showDetails(${item.id}, '${item.media_type}')">
+            <img src="${item.poster_path ? tmdbPosterurl + '/w92' + item.poster_path : 'placeholder.jpg'}" 
+                 alt="${item.title || item.name}"
+                 onerror="this.src='placeholder.jpg'">
+            <div class="suggestion-info">
+                <div class="suggestion-title">${item.title || item.name}</div>
+                <div class="suggestion-year">${getReleaseYear(item) || 'N/A'}</div>
+                <div class="suggestion-rating">⭐ ${item.vote_average ? item.vote_average.toFixed(1) : 'N/A'}</div>
+            </div>
+        </div>
+    `).join('');
+
+    searchSuggestions.style.display = 'block';
+}
+
+function initializeYearFilter() {
+  const currentYear = new Date().getFullYear();
+  for (let year = currentYear; year >= 1900; year--) {
+    const option = document.createElement('option');
+    option.value = year;
+    option.textContent = year;
+    yearFilter.appendChild(option);
   }
 }
 
-function displayResults(results) {
-  resultsContainer.innerHTML = '';
-  if (results.length === 0) {
-    resultsContainer.innerHTML = '<p class="noResults">No results found.</p>';
-    return;
+async function initializeGenreFilter() {
+  try {
+    const response = await fetch(`${tmdbBaseUrl}/genre/movie/list?api_key=${tmdbApiKey}`);
+    const data = await response.json();
+    data.genres.forEach(genre => {
+      const option = document.createElement('option');
+      option.value = genre.id;
+      option.textContent = genre.name;
+      genreFilter.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Error loading genres:', error);
   }
-  results.forEach(result => {
-    if (result.media_type !== 'person') {
-      const resultCard = document.createElement('div');
-      resultCard.classList.add('result-card');
-      resultCard.innerHTML = `
-        <img src="${tmdbPosterurl}/w92${result.poster_path}" alt="${result.title || result.name}">
-        <div>
-          <p class="title">${result.title || result.name}</p>
-          <p>${result.media_type} (${getReleaseYear(result)})</p>
-        </div>
-      `;
-      resultCard.addEventListener('click', () => showDetails(result.id, result.media_type));
-      resultsContainer.appendChild(resultCard);
-    }
-  });
 }
 
 function getReleaseYear(result) {
@@ -494,5 +593,4 @@ function showDetails(id, mediaType) {
 
 function handleSearchFormSubmit(event) {
   event.preventDefault();
-  searchMovies();
 }
