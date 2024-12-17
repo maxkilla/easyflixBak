@@ -16,16 +16,178 @@ const genreListContainer = document.getElementById('genreList');
 let selectedGenre = null;
 let watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
 let continueWatching = JSON.parse(localStorage.getItem('continueWatching')) || [];
+let currentMediaType = 'movie';
 
 // Load content when the page loads
 document.addEventListener('DOMContentLoaded', () => {
   loadGenres();
   loadFeaturedMovie();
-  loadTrendingMovies();
-  loadTopRatedMovies();
-  loadUpcomingMovies();
-  loadContinueWatching();
+  loadContent();
+  setupNavigation();
 });
+
+function setupNavigation() {
+  const navLinks = document.querySelectorAll('.nav-links a');
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Remove active class from all links
+      navLinks.forEach(l => l.classList.remove('active'));
+      // Add active class to clicked link
+      e.target.classList.add('active');
+      
+      // Update current media type
+      if (e.target.textContent === 'TV Shows') {
+        currentMediaType = 'tv';
+      } else if (e.target.textContent === 'Movies') {
+        currentMediaType = 'movie';
+      } else if (e.target.textContent === 'My List') {
+        loadWatchlist();
+        return;
+      }
+      
+      // Reload content with new media type
+      loadContent();
+    });
+  });
+}
+
+function loadContent() {
+  // Clear previous results
+  resultsContainer.innerHTML = '';
+  
+  // Load appropriate content based on media type
+  loadTrendingContent();
+  loadTopRatedContent();
+  loadUpcomingContent();
+  
+  // Show/hide sections based on media type
+  const upcomingSection = document.querySelector('.upcoming-section');
+  if (currentMediaType === 'tv') {
+    upcomingSection.style.display = 'none';
+    document.querySelector('.trending-section h2').textContent = 'Trending TV Shows';
+    document.querySelector('.top-rated-section h2').textContent = 'Top Rated TV Shows';
+  } else {
+    upcomingSection.style.display = 'block';
+    document.querySelector('.trending-section h2').textContent = 'Trending Movies';
+    document.querySelector('.top-rated-section h2').textContent = 'Top Rated Movies';
+  }
+}
+
+async function loadTrendingContent() {
+  showLoading(trendingMoviesContainer);
+  try {
+    let url = `${tmdbBaseUrl}/trending/${currentMediaType}/week?api_key=${tmdbApiKey}`;
+    if (selectedGenre) {
+      url += `&with_genres=${selectedGenre}`;
+    }
+    const response = await fetch(url);
+    const data = await response.json();
+    displayContent(data.results, trendingMoviesContainer);
+  } catch (error) {
+    console.error('Error loading trending content:', error);
+    showError(trendingMoviesContainer);
+  }
+}
+
+async function loadTopRatedContent() {
+  showLoading(topRatedContainer);
+  try {
+    const response = await fetch(`${tmdbBaseUrl}/${currentMediaType}/top_rated?api_key=${tmdbApiKey}`);
+    const data = await response.json();
+    displayContent(data.results, topRatedContainer);
+  } catch (error) {
+    console.error('Error loading top rated content:', error);
+    showError(topRatedContainer);
+  }
+}
+
+async function loadUpcomingContent() {
+  if (currentMediaType === 'movie') {
+    showLoading(upcomingContainer);
+    try {
+      const response = await fetch(`${tmdbBaseUrl}/movie/upcoming?api_key=${tmdbApiKey}`);
+      const data = await response.json();
+      displayContent(data.results, upcomingContainer);
+    } catch (error) {
+      console.error('Error loading upcoming movies:', error);
+      showError(upcomingContainer);
+    }
+  }
+}
+
+async function loadWatchlist() {
+  // Hide other sections
+  document.querySelectorAll('section').forEach(section => {
+    if (!section.classList.contains('watchlist-section')) {
+      section.style.display = 'none';
+    }
+  });
+
+  // Create watchlist section if it doesn't exist
+  let watchlistSection = document.querySelector('.watchlist-section');
+  if (!watchlistSection) {
+    watchlistSection = document.createElement('section');
+    watchlistSection.classList.add('watchlist-section');
+    document.querySelector('main').appendChild(watchlistSection);
+  }
+
+  watchlistSection.innerHTML = `
+    <div class="section-header">
+      <h2>My Watchlist</h2>
+    </div>
+    <div class="movie-grid" id="watchlistGrid"></div>
+  `;
+
+  const watchlistGrid = document.getElementById('watchlistGrid');
+  showLoading(watchlistGrid);
+
+  try {
+    const watchlistItems = await Promise.all(
+      watchlist.map(async (id) => {
+        const response = await fetch(`${tmdbBaseUrl}/movie/${id}?api_key=${tmdbApiKey}`);
+        return response.json();
+      })
+    );
+    
+    if (watchlistItems.length === 0) {
+      watchlistGrid.innerHTML = '<div class="empty-state">Your watchlist is empty</div>';
+    } else {
+      displayContent(watchlistItems, watchlistGrid);
+    }
+  } catch (error) {
+    console.error('Error loading watchlist:', error);
+    showError(watchlistGrid);
+  }
+}
+
+function displayContent(items, container) {
+  container.innerHTML = '';
+  
+  items.forEach(item => {
+    const card = document.createElement('div');
+    card.classList.add('movie-card');
+    
+    const releaseDate = new Date(item.release_date || item.first_air_date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+    
+    card.innerHTML = `
+      <div class="movie-rating">${item.vote_average.toFixed(1)}</div>
+      <img src="${tmdbPosterurl}/w500${item.poster_path}" alt="${item.title || item.name}" 
+           onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'">
+      <div class="movie-info">
+        <div class="movie-title">${item.title || item.name}</div>
+        <div class="movie-date">${releaseDate}</div>
+      </div>
+    `;
+    
+    card.addEventListener('click', () => showDetails(item.id, currentMediaType));
+    container.appendChild(card);
+  });
+}
 
 // Featured Movie Functions
 async function loadFeaturedMovie() {
@@ -142,30 +304,38 @@ function showToast(message) {
 
 // Update the displayMovies function to be more generic
 function displayMovies(movies, container) {
-  container.innerHTML = '';
-  
-  movies.forEach(movie => {
-    const movieCard = document.createElement('div');
-    movieCard.classList.add('movie-card');
-    
-    const releaseDate = new Date(movie.release_date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-    
-    movieCard.innerHTML = `
-      <div class="movie-rating">${movie.vote_average.toFixed(1)}</div>
-      <img src="${tmdbPosterurl}/w500${movie.poster_path}" alt="${movie.title}" onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'">
+  if (!movies || movies.length === 0) {
+    showEmptyState(container);
+    return;
+  }
+
+  container.innerHTML = movies.map(movie => `
+    <div class="movie-card" onclick="showDetails(${movie.id}, '${currentMediaType}')">
+      <img src="${tmdbPosterurl}/w342${movie.poster_path}" 
+           alt="${movie.title || movie.name}"
+           onerror="this.src='placeholder.jpg'">
       <div class="movie-info">
-        <div class="movie-title">${movie.title}</div>
-        <div class="movie-date">${releaseDate}</div>
+        <h3>${movie.title || movie.name}</h3>
+        <div class="movie-meta">
+          <span class="release-date">${getReleaseYear(movie)}</span>
+          <span class="rating">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            ${(movie.vote_average * 10).toFixed(0)}%
+          </span>
+        </div>
       </div>
-    `;
-    
-    movieCard.addEventListener('click', () => showDetails(movie.id, 'movie'));
-    container.appendChild(movieCard);
-  });
+      ${movie.poster_path ? `
+      <div class="hover-info">
+        <p>${movie.overview.substring(0, 150)}${movie.overview.length > 150 ? '...' : ''}</p>
+        <button class="btn btn-primary" onclick="event.stopPropagation(); addToWatchlist(${movie.id})">
+          Add to Watchlist
+        </button>
+      </div>
+      ` : ''}
+    </div>
+  `).join('');
 }
 
 async function loadGenres() {
@@ -319,11 +489,7 @@ function getReleaseYear(result) {
 }
 
 function showDetails(id, mediaType) {
-  if (mediaType === 'tv') {
-    window.location.href = `details.html?id=${id}&mediaType=${mediaType}&season=1&episode=1`;
-  } else {
-    window.location.href = `details.html?id=${id}&mediaType=${mediaType}`;
-  }
+  window.location.href = `details.html?id=${id}&type=${mediaType}`;
 }
 
 function handleSearchFormSubmit(event) {

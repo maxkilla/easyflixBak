@@ -1,38 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-  <link rel="manifest" href="favicon/site.webmanifest">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
-  <title>CineVibe</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineVibe - Details</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-  <div class="container">
-    <h1>CineVibe</h1>
-    <div id="details"></div>
-    <button id="homeButton" onclick="goHome()">Home</button>
-    <div id="videoOptions" style="display: none;">
-      <label for="seasonSelect">Season:</label>
-      <select id="seasonSelect"></select>
-      <label for="episodeSelect">Episode:</label>
-      <select id="episodeSelect"></select>
-    </div>
-    <div id="episodeDetails"></div>
-    <button id="watchNowButton" onclick="openVideo()">Watch Now</button>
-    <div id="videoContainer" class="video-container"></div>
-  </div>
-  <footer>
-    <p>&copy; 2024 CineVibe</p>
-  </footer>
-  <script src="details.js"></script>
-</body>
+    <div class="container">
+        <nav class="main-nav">
+            <button id="homeButton" onclick="goHome()" class="back-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Home
+            </button>
+            <h1>CineVibe</h1>
+        </nav>
 
+        <div class="details-hero" id="detailsHero"></div>
+
+        <main class="details-content">
+            <div class="details-main" id="details"></div>
+
+            <div class="series-controls" id="videoOptions" style="display: none;">
+                <div class="season-episode-selector">
+                    <div class="select-group">
+                        <label for="seasonSelect">Season</label>
+                        <select id="seasonSelect"></select>
+                    </div>
+                    <div class="select-group">
+                        <label for="episodeSelect">Episode</label>
+                        <select id="episodeSelect"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="episodeDetails" class="episode-details"></div>
+
+            <div class="video-section">
+                <button id="watchNowButton" class="btn btn-primary watch-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                  Watch Now
+                </button>
+                <div id="videoContainer" class="video-container"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="details.js"></script>
+</body>
 </html>
