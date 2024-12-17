@@ -1,11 +1,13 @@
 :root {
+  --primary: #7CB342;
+  --primary-dark: #558B2F;
+  --primary-light: #9CCC65;
+  --accent: #8BC34A;
   --background: #121212;
-  --surface: #1e1e1e;
-  --primary: #bb86fc;
-  --secondary: #03dac6;
-  --text: #ffffff;
-  --text-secondary: #b3b3b3;
-  --error: #cf6679;
+  --surface: #1E1E1E;
+  --text: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --error: #CF6679;
   --nav-height: 80px;
 }
 
@@ -204,7 +206,7 @@ button {
 
 button:hover {
   transform: translateY(-2px);
-  background-color: var(--secondary);
+  background-color: var(--primary-dark);
 }
 
 #results {
@@ -300,7 +302,7 @@ button:hover {
   top: 10px;
   right: 10px;
   background-color: rgba(0, 0, 0, 0.8);
-  color: var(--secondary);
+  color: var(--primary);
   padding: 0.3rem 0.6rem;
   border-radius: 4px;
   font-weight: bold;
@@ -347,8 +349,8 @@ button:hover {
 }
 
 .genre-pill.active {
-  border-color: var(--secondary);
-  color: var(--secondary);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 main {
@@ -404,7 +406,7 @@ html {
 }
 
 .view-all:hover {
-  color: var(--secondary);
+  color: var(--primary-dark);
 }
 
 /* Toast Notifications */
